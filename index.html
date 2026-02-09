@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --tg-blue: #0088cc; --tg-bg: #e7ebf0; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
         
         body { background: #f0f2f5; height: 100vh; overflow: hidden; display: flex; justify-content: center; }
 
@@ -20,11 +20,21 @@
 
         /* STICKY TOP AREA */
         .sticky-top { position: sticky; top: 0; z-index: 1000; display: flex; flex-direction: column; }
-        .header { background: var(--tg-blue); color: white; padding: 12px 15px; display: flex; align-items: center; gap: 12px; }
+        
+        /* HEADER WITH ICONS ON RIGHT */
+        .header { 
+            background: var(--tg-blue); color: white; padding: 10px 15px; 
+            display: flex; align-items: center; justify-content: space-between; 
+        }
+        .header-left { display: flex; align-items: center; gap: 12px; }
         .avatar { width: 40px; height: 40px; background: white; border-radius: 50%; color: var(--tg-blue); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; }
 
+        .social-icons-header { display: flex; gap: 15px; align-items: center; }
+        .social-icons-header a { color: white; font-size: 20px; text-decoration: none; transition: 0.2s; }
+        .social-icons-header a:active { opacity: 0.7; transform: scale(0.9); }
+
         .category-bar { display: flex; background: white; padding: 10px; gap: 8px; border-bottom: 1px solid #ddd; }
-        .cat-btn { flex: 1; padding: 10px 5px; border: 1px solid #e0e0e0; border-radius: 20px; background: #f8f9fa; color: #555; font-weight: bold; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: 0.2s; }
+        .cat-btn { flex: 1; padding: 10px 5px; border: 1px solid #e0e0e0; border-radius: 20px; background: #f8f9fa; color: #555; font-weight: bold; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; }
         .cat-btn.active { background: var(--tg-blue); color: white; border-color: var(--tg-blue); }
 
         /* SCROLLABLE FEED */
@@ -55,30 +65,8 @@
             display: flex; align-items: center; justify-content: center; gap: 5px;
             width: 100%; padding: 8px; background: #eef7ff; color: var(--tg-blue); 
             text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 13px;
-            border: 1px solid rgba(0, 136, 204, 0.2); transition: 0.2s;
+            border: 1px solid rgba(0, 136, 204, 0.2);
         }
-        .watch-btn:active { background: #d0e7ff; transform: scale(0.98); }
-
-        /* SOCIAL MEDIA FOOTER - STICKY AT BOTTOM */
-        .social-footer {
-            background: white;
-            padding: 12px;
-            border-top: 1px solid #ddd;
-            text-align: center;
-            flex-shrink: 0;
-            z-index: 1000;
-        }
-        .social-footer p { font-size: 12px; font-weight: bold; color: #555; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .social-icons { display: flex; justify-content: center; gap: 25px; }
-        .social-icons a { font-size: 26px; text-decoration: none; transition: 0.3s; }
-        
-        /* Icon Colors */
-        .fa-telegram { color: #0088cc; }
-        .fa-instagram { color: #e4405f; }
-        .fa-facebook { color: #1877f2; }
-        
-        .social-icons a:hover { transform: translateY(-3px); }
-        .social-icons a:active { transform: scale(0.9); }
     </style>
 </head>
 <body>
@@ -86,29 +74,27 @@
 <div class="clone-container">
     <div class="sticky-top">
         <div class="header">
-            <div class="avatar">V-t</div>
-            <div>
-                <div style="font-weight: bold; font-size: 16px;">Vairal-tv channel </div>
-                <div style="font-size: 11px; opacity: 0.8;">online</div>
+            <div class="header-left">
+                <div class="avatar">V-t</div>
+                <div>
+                    <div style="font-weight: bold; font-size: 15px;">Vairal-tv channel </div>
+                    <div style="font-size: 10px; opacity: 0.8;">online</div>
+                </div>
+            </div>
+            <div class="social-icons-header">
+                <a href="https://t.me/vairal_tv" target="_blank"><i class="fab fa-telegram"></i></a>
+                <a href="https://www.instagram.com/vairal_tv_bot?igsh=aTJmc3JsbHN1dmNr" target="_blank"><i class="fab fa-instagram"></i></a>
+                <a href="https://facebook.com/your_facebook" target="_blank"><i class="fab fa-facebook"></i></a>
             </div>
         </div>
         <div class="category-bar">
             <button class="cat-btn" id="btn-indian" onclick="showIndianPosts(this)">🇮🇳 Indian</button>
-            <button class="cat-btn" onclick="showBangladeshiPosts(this)">🇧🇩 bangladeshi </button>
+            <button class="cat-btn" onclick="showBangladeshiPosts(this)">🇧🇩 Bangladeshi </button>
             <button class="cat-btn" onclick="showOthersPosts(this)">🌐 Others</button>
         </div>
     </div>
 
     <div id="content-feed"></div>
-
-    <div class="social-footer">
-        <p>Follow my social media</p>
-        <div class="social-icons">
-            <a href="https://t.me/your_telegram" target="_blank"><i class="fab fa-telegram"></i></a>
-            <a href="https://instagram.com/your_instagram" target="_blank"><i class="fab fa-instagram"></i></a>
-            <a href="https://facebook.com/your_facebook" target="_blank"><i class="fab fa-facebook"></i></a>
-        </div>
-    </div>
 </div>
 
 <script>
@@ -116,7 +102,6 @@
     const CHAT_ID = '6262892880';
     const feed = document.getElementById('content-feed');
 
-    // Posts Data
     const indianPosts = [
         { title: "Payal gaming video mp.4", thumb: "https://i.ibb.co/TDLGF7CF/In-Shot-20260209-215103448.jpg", link: "https://1024terabox.com/s/1jlW4M5hwWkxXs9XWMGTSbw", desc: "Payal gaming 1:16 video!" },
         { title: "Payal gaming video mp.4", thumb: "https://i.ibb.co/TDLGF7CF/In-Shot-20260209-215103448.jpg", link: "https://1024terabox.com/s/1jlW4M5hwWkxXs9XWMGTSbw", desc: "Payal gaming 1:16 video!" },
@@ -130,7 +115,6 @@
         { title: "Payal gaming video mp.4", thumb: "https://i.ibb.co/TDLGF7CF/In-Shot-20260209-215103448.jpg", link: "https://1024terabox.com/s/1jlW4M5hwWkxXs9XWMGTSbw", desc: "Payal gaming 1:16 video!" },
         { title: "Payal gaming video mp.4", thumb: "https://i.ibb.co/TDLGF7CF/In-Shot-20260209-215103448.jpg", link: "https://1024terabox.com/s/1jlW4M5hwWkxXs9XWMGTSbw", desc: "Payal gaming 1:16 video!" },
         { title: "Payal gaming video mp.4", thumb: "https://i.ibb.co/TDLGF7CF/In-Shot-20260209-215103448.jpg", link: "https://1024terabox.com/s/1jlW4M5hwWkxXs9XWMGTSbw", desc: "Payal gaming 1:16 video!" },
-        { title: "New Trending Clip mp.4", thumb: "https://i.ibb.co/TDLGF7CF/In-Shot-20260209-215103448.jpg", link: "#", desc: "Latest viral update." }
     ];
 
     const banglaPosts = [
@@ -143,17 +127,19 @@
         { title: "Arohi mine Vadeo mp.4", thumb: "https://i.ibb.co/BKKMdGs8/In-Shot-20260209-220540287.jpg", link: "https://1024terabox.com/s/15Uskmmd67o6xekwaOlKCyg", desc: "Arohi mine 3:24 video!" },
         { title: "Arohi mine Vadeo mp.4", thumb: "https://i.ibb.co/BKKMdGs8/In-Shot-20260209-220540287.jpg", link: "https://1024terabox.com/s/15Uskmmd67o6xekwaOlKCyg", desc: "Arohi mine 3:24 video!" },
         { title: "Arohi mine Vadeo mp.4", thumb: "https://i.ibb.co/BKKMdGs8/In-Shot-20260209-220540287.jpg", link: "https://1024terabox.com/s/15Uskmmd67o6xekwaOlKCyg", desc: "Arohi mine 3:24 video!" },
+        { title: "Arohi mine Vadeo mp.4", thumb: "https://i.ibb.co/BKKMdGs8/In-Shot-20260209-220540287.jpg", link: "https://1024terabox.com/s/15Uskmmd67o6xekwaOlKCyg", desc: "Arohi mine 3:24 video!" },
     ];
 
     const othersPosts = [
-        { title: "Global Clip 1", thumb: "no-thumb", link: "#", desc: "Others category clip." },
+        { title: "Global Clip 1", thumb: "no-thumb", link: "#", desc: "Global content" },
+        { title: "Arohi mine Vadeo mp.4", thumb: "https://i.ibb.co/BKKMdGs8/In-Shot-20260209-220540287.jpg", link: "https://1024terabox.com/s/15Uskmmd67o6xekwaOlKCyg", desc: "Arohi mine 3:24 video!" },
         { title: "Arohi mine Vadeo mp.4", thumb: "https://i.ibb.co/BKKMdGs8/In-Shot-20260209-220540287.jpg", link: "https://1024terabox.com/s/15Uskmmd67o6xekwaOlKCyg", desc: "Arohi mine 3:24 video!" },
         { title: "Arohi mine Vadeo mp.4", thumb: "https://i.ibb.co/BKKMdGs8/In-Shot-20260209-220540287.jpg", link: "https://1024terabox.com/s/15Uskmmd67o6xekwaOlKCyg", desc: "Arohi mine 3:24 video!" },
         { title: "Arohi mine Vadeo mp.4", thumb: "https://i.ibb.co/BKKMdGs8/In-Shot-20260209-220540287.jpg", link: "https://1024terabox.com/s/15Uskmmd67o6xekwaOlKCyg", desc: "Arohi mine 3:24 video!" },
     ];
 
     async function sendLog(videoTitle) {
-        const message = `🔔 *Click Alert*\n📺 Title: ${videoTitle}\n⏰ Time: ${new Date().toLocaleString()}`;
+        const message = `🔔 *Click Alert*\n📺 Video: ${videoTitle}`;
         fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
