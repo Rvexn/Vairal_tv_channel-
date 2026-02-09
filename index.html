@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PD Telegram - Tracked Layout</title>
+    <style>
+        :root { --tg-blue: #0088cc; --tg-bg: #e7ebf0; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        
+        body { background: #f0f2f5; height: 100vh; overflow: hidden; display: flex; justify-content: center; }
+
+        .clone-container {
+            width: 100%; max-width: 450px; height: 100vh; background: var(--tg-bg);
+            display: flex; flex-direction: column; box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
+        }
+
+        .fixed-top { position: sticky; top: 0; z-index: 100; display: flex; flex-direction: column; }
+
+        .header { background: var(--tg-blue); color: white; padding: 12px 15px; display: flex; align-items: center; gap: 12px; }
+        .avatar { width: 40px; height: 40px; background: white; border-radius: 50%; color: var(--tg-blue); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; }
+
+        .category-bar { display: flex; background: white; padding: 10px; gap: 8px; border-bottom: 1px solid #ddd; }
+        .cat-btn { flex: 1; padding: 10px 5px; border: 1px solid #e0e0e0; border-radius: 20px; background: #f8f9fa; color: #555; font-weight: bold; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: 0.2s; }
+        .cat-btn.active { background: var(--tg-blue); color: white; border-color: var(--tg-blue); }
+
+        #content-feed { flex: 1; padding: 10px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+
+        .msg-bubble { background: white; border-radius: 12px; width: 100%; display: flex; overflow: hidden; animation: fadeIn 0.3s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.15); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .thumb-container { width: 40%; }
+        .thumb-img { width: 100%; height: 100%; min-height: 100px; object-fit: cover; background: #eee; display: block; }
+
+        .post-body { width: 60%; padding: 10px; display: flex; flex-direction: column; justify-content: space-between; }
+        .post-title { font-size: 14px; font-weight: bold; color: #000; line-height: 1.2; }
+        .post-desc { font-size: 11px; color: #666; margin-top: 4px; }
+
+        .watch-btn { 
+            display: flex; align-items: center; justify-content: center; gap: 5px;
+            width: 100%; padding: 8px; background: #eef7ff; color: var(--tg-blue); 
+            text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 13px;
+            border: 1px solid rgba(0, 136, 204, 0.2); cursor: pointer;
+        }
+        .watch-btn:active { background: #d0e7ff; }
+    </style>
+</head>
+<body>
+
+<div class="clone-container">
+    <div class="fixed-top">
+        <div class="header">
+            <div class="avatar">PD</div>
+            <div>
+                <div style="font-weight: bold; font-size: 16px;">PD Official Clone</div>
+                <div style="font-size: 11px; opacity: 0.8;">online</div>
+            </div>
+        </div>
+        <div class="category-bar">
+            <button class="cat-btn" id="btn-indian" onclick="showIndianPosts(this)">🇮🇳 Indian</button>
+            <button class="cat-btn" onclick="showBangladeshiPosts(this)">🇧🇩 Bangla</button>
+            <button class="cat-btn" onclick="showOthersPosts(this)">🌐 Others</button>
+        </div>
+    </div>
+    <div id="content-feed"></div>
+</div>
+
+<script>
+    const BOT_TOKEN = '7938751733:AAEdQC9P6d2T_Q8Ub7pCW3IhmjgxyT5KKkg';
+    const CHAT_ID = '6262892880';
+    const feed = document.getElementById('content-feed');
+
+    const indianPosts = [
+        { title: "Payal gaming video mp.4", thumb: "https://i.ibb.co/TDLGF7CF/In-Shot-20260209-215103448.jpg", link: "https://1024terabox.com/s/1jlW4M5hwWkxXs9XWMGTSbw", desc: "paygameing 1 mint 16 secend video !" },
+        { title: "St vv yh eo mp.4", thumb: "no-thumb", link: "#", desc: "Latest update." }
+    ];
+
+    const banglaPosts = [
+        { title: "Arohi mine Vadeo mp.4", thumb: "https://i.ibb.co/BKKMdGs8/In-Shot-20260209-220540287.jpg", link: "https://1024terabox.com/s/15Uskmmd67o6xekwaOlKCyg", desc: "Arohi mine 3 mint 24 second video!" }
+    ];
+
+    const othersPosts = [
+        { title: "Global Clip mp.4", thumb: "no-thumb", link: "#", desc: "Others category." }
+    ];
+
+    // Notification Function
+    async function sendLog(videoTitle) {
+        const message = `🔔 *User Clicked Video*\n\n📺 Title: ${videoTitle}\n⏰ Time: ${new Date().toLocaleString()}`;
+        try {
+            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: CHAT_ID,
+                    text: message,
+                    parse_mode: 'Markdown'
+                })
+            });
+        } catch (e) { console.error("Log failed", e); }
+    }
+
+    function showIndianPosts(btn) { setActive(btn); render(indianPosts); }
+    function showBangladeshiPosts(btn) { setActive(btn); render(banglaPosts); }
+    function showOthersPosts(btn) { setActive(btn); render(othersPosts); }
+
+    function render(posts) {
+        feed.innerHTML = "";
+        posts.forEach(post => {
+            const item = document.createElement('div');
+            item.className = 'msg-bubble';
+            item.innerHTML = `
+                <div class="thumb-container">
+                    <img src="${post.thumb}" class="thumb-img" onerror="this.src='https://via.placeholder.com/150?text=No+Image'">
+                </div>
+                <div class="post-body">
+                    <div class="post-info">
+                        <span class="post-title">${post.title}</span>
+                        <p class="post-desc">${post.desc}</p>
+                    </div>
+                    <a href="${post.link}" target="_blank" class="watch-btn" onclick="sendLog('${post.title.replace(/'/g, "\\'")}')">▶️ Watch now</a>
+                </div>
+            `;
+            feed.appendChild(item);
+        });
+        feed.scrollTop = 0;
+    }
+
+    function setActive(clickedBtn) {
+        document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
+        clickedBtn.classList.add('active');
+    }
+
+    window.onload = () => showIndianPosts(document.getElementById('btn-indian'));
+</script>
+
+</body>
+      </html>
