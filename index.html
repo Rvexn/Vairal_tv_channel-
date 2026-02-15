@@ -8,186 +8,173 @@
     <style>
         :root { --tg-blue: #0088cc; --tg-bg: #e7ebf0; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
-        
         body { background: #f0f2f5; height: 100vh; overflow: hidden; display: flex; justify-content: center; }
 
         .clone-container {
             width: 100%; max-width: 450px; height: 100vh; background: var(--tg-bg);
             display: flex; flex-direction: column; box-shadow: 0 0 20px rgba(0,0,0,0.1);
             background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
-            background-size: cover;
+            background-size: cover; position: relative;
         }
 
+        /* --- NOTICE / ALERT OVERLAY --- */
+        #notice-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 9999;
+            display: none; align-items: center; justify-content: center; padding: 20px;
+        }
+        .notice-box {
+            background: white; width: 100%; max-width: 350px; border-radius: 20px;
+            overflow: hidden; text-align: center; animation: zoomIn 0.3s ease;
+        }
+        .notice-img { width: 100%; max-height: 200px; object-fit: cover; background: #eee; }
+        .notice-content { padding: 20px; }
+        .notice-title { font-size: 18px; font-weight: bold; color: #333; margin-bottom: 10px; }
+        .notice-text { font-size: 14px; color: #666; margin-bottom: 20px; line-height: 1.5; }
+        .notice-btn { 
+            display: block; width: 100%; padding: 12px; background: var(--tg-blue); 
+            color: white; text-decoration: none; border-radius: 10px; font-weight: bold; margin-bottom: 10px;
+        }
+        .close-notice { color: #888; font-size: 12px; cursor: pointer; text-decoration: underline; }
+
+        @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        /* Styles */
         .sticky-top { position: sticky; top: 0; z-index: 1000; display: flex; flex-direction: column; }
-        
         .header { background: var(--tg-blue); color: white; padding: 10px 15px; display: flex; align-items: center; justify-content: space-between; }
         .header-left { display: flex; align-items: center; gap: 10px; }
-        .avatar { width: 38px; height: 38px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 1px solid rgba(255,255,255,0.4); }
-
-        .social-icons-header { display: flex; gap: 12px; align-items: center; }
-        .social-icons-header a { color: white; font-size: 18px; text-decoration: none; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: rgba(255,255,255,0.1); border-radius: 50%; }
-
+        .avatar { width: 38px; height: 38px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 1px solid rgba(255,255,255,0.4); cursor: pointer; }
         .category-bar { display: flex; background: white; padding: 10px; gap: 8px; border-bottom: 1px solid #ddd; }
-        .cat-btn { flex: 1; padding: 10px 5px; border: 1px solid #e0e0e0; border-radius: 20px; background: #f8f9fa; color: #555; font-weight: bold; font-size: 11px; cursor: pointer; text-align: center; }
-        .cat-btn.active { background: var(--tg-blue); color: white; border-color: var(--tg-blue); }
-
-        #content-feed { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; -webkit-overflow-scrolling: touch; }
-
-        .msg-bubble { background: white; border-radius: 12px; width: 100%; display: flex; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,0.15); flex-shrink: 0; min-height: 120px; }
-
-        .thumb-container { width: 38%; flex-shrink: 0; }
-        .thumb-img { width: 100%; height: 100%; object-fit: cover; background: #eee; }
-
+        .cat-btn { flex: 1; padding: 10px 5px; border: 1px solid #e0e0e0; border-radius: 20px; background: #f8f9fa; font-weight: bold; font-size: 11px; cursor: pointer; text-align: center; }
+        .cat-btn.active { background: var(--tg-blue); color: white; }
+        
+        #content-feed { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+        .msg-bubble { background: white; border-radius: 12px; display: flex; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,0.15); min-height: 120px; }
+        .thumb-container { width: 38%; }
+        .thumb-img { width: 100%; height: 100%; object-fit: cover; }
         .post-body { width: 62%; padding: 10px; display: flex; flex-direction: column; justify-content: space-between; }
         
-        .title-wrapper { display: flex; justify-content: space-between; align-items: flex-start; gap: 5px; }
-        .post-title { font-size: 14px; font-weight: bold; color: #000; line-height: 1.2; flex: 1; }
-        .wa-share-btn { color: #25D366; text-decoration: none; font-size: 18px; padding: 2px; }
+        /* Share Section */
+        .post-header-info { display: flex; justify-content: space-between; align-items: flex-start; gap: 5px; }
+        .wa-icon { color: #25D366; font-size: 20px; text-decoration: none; cursor: pointer; }
 
-        .post-desc { font-size: 11px; color: #666; margin-bottom: 5px; }
-
-        .watch-btn { display: flex; align-items: center; justify-content: center; gap: 5px; width: 100%; padding: 8px; background: #eef7ff; color: var(--tg-blue); text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 12px; border: 1px solid rgba(0, 136, 204, 0.1); }
-
-        /* --- Footer Styles --- */
-        .feed-footer { margin: 10px 0 30px 0; padding: 15px; text-align: center; background: rgba(255, 255, 255, 0.9); border-radius: 15px; flex-shrink: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        
-        /* Channel Buttons Container */
-        .channel-btn-container { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
-        .channel-link { 
-            display: block; width: 100%; padding: 10px; 
-            background: var(--tg-blue); color: white; 
-            text-decoration: none; border-radius: 8px; 
-            font-weight: bold; font-size: 13px; 
-            transition: 0.3s;
-        }
-        .channel-link:active { opacity: 0.8; transform: scale(0.98); }
-
-        .footer-icons { display: flex; justify-content: center; gap: 20px; margin-top: 10px; border-top: 1px solid #eee; padding-top: 10px; }
-        .footer-icons a { font-size: 26px; text-decoration: none; }
+        .watch-btn { display: flex; align-items: center; justify-content: center; padding: 8px; background: #eef7ff; color: var(--tg-blue); text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; }
     </style>
 </head>
 <body>
+
+<div id="notice-overlay">
+    <div class="notice-box">
+        <img id="alert-img" src="" class="notice-img">
+        <div class="notice-content">
+            <div id="alert-title" class="notice-title">Notice Update</div>
+            <p id="alert-text" class="notice-text">Please join our new channel for daily updates!</p>
+            <a id="alert-btn-link" href="#" target="_blank" class="notice-btn">Join Now</a>
+            <div class="close-notice" onclick="closeNotice()">Maybe Later</div>
+        </div>
+    </div>
+</div>
 
 <div class="clone-container">
     <div class="sticky-top">
         <div class="header">
             <div class="header-left">
-                <div class="avatar">VX</div>
+                <div class="avatar" onclick="openAdmin()">VX</div>
                 <div>
                     <div style="font-weight: bold; font-size: 14px;">Vairal-hub Vx </div>
-                    <div style="font-size: 10px; opacity: 0.8;">online</div>
+                    <div id="display-uid" style="font-size: 10px; opacity: 0.8;">online</div>
                 </div>
             </div>
-            
-            <div class="social-icons-header">
-                <a href="https://t.me/Vairal_hub_Vx"><i class="fab fa-telegram-plane"></i></a>
-                <a href="https://www.instagram.com/vairal_tv_bot?igsh=aTJmc3JsbHN1dmNr"><i class="fab fa-instagram"></i></a>
-                <a href="#"><i class="fab fa-facebook-f"></i></a>
             </div>
-        </div>
-
         <div class="category-bar">
-            <button class="cat-btn" id="btn-indian" onclick="showIndianPosts(this)">🇮🇳 Indian</button>
-            <button class="cat-btn" onclick="showBangladeshiPosts(this)">🇧🇩 Bangladeshi </button>
-            <button class="cat-btn" onclick="showOthersPosts(this)">🌐 Others</button>
+            <button class="cat-btn active" id="btn-ind" onclick="render('ind', this)">🇮🇳 Indian</button>
+            <button class="cat-btn" onclick="render('ban', this)">🇧🇩 Bangla</button>
+            <button class="cat-btn" onclick="render('oth', this)">🌐 Others</button>
         </div>
     </div>
-
     <div id="content-feed"></div>
 </div>
 
 <script>
     const BOT_TOKEN = '7938751733:AAEdQC9P6d2T_Q8Ub7pCW3IhmjgxyT5KKkg';
     const CHAT_ID = '6262892880';
-    const FIXED_YOUTUBE_LINK = "https://vairal-tv-channel-231.vercel.app/"; 
 
-    // Yahan apne Channel Links daliye
-    const channelLinks = {
-        chan2: "https://t.me/Vairal_hub_Vx",
-        chan1: "https://vairal-tv-channel-231.vercel.app/",
+    let appConfig = JSON.parse(localStorage.getItem('vx_config')) || {
+        alert: {
+            show: true,
+            img: "https://i.ibb.co/TDLGF7CF/In-Shot-20260209-215103448.jpg",
+            title: "🚀 New Video Update!",
+            text: "Dosto naya video aa chuka hai, niche click karke channel join karein.",
+            btnText: "📢 Join Telegram",
+            btnLink: "https://t.me/Vairal_hub_Vx"
+        },
+        posts: []
     };
 
-    const feed = document.getElementById('content-feed');
+    function initUser() {
+        let uid = localStorage.getItem('vHub_UID') || ('USR-' + Math.floor(1000 + Math.random() * 9000));
+        localStorage.setItem('vHub_UID', uid);
+        document.getElementById('display-uid').innerText = `ID: ${uid}`;
+        
+        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent('User Online: '+uid)}`);
+        
+        if(appConfig.alert.show) {
+            setTimeout(() => {
+                document.getElementById('alert-img').src = appConfig.alert.img;
+                document.getElementById('alert-title').innerText = appConfig.alert.title;
+                document.getElementById('alert-text').innerText = appConfig.alert.text;
+                document.getElementById('alert-btn-link').innerText = appConfig.alert.btnText;
+                document.getElementById('alert-btn-link').href = appConfig.alert.btnLink;
+                document.getElementById('notice-overlay').style.display = 'flex';
+            }, 1500);
+        }
+    }
 
-    const indianPosts = [
-        { title: "Payal gaming Vairal video mp.4", thumb: "https://i.ibb.co/TDLGF7CF/In-Shot-20260209-215103448.jpg", link: "https://1024terabox.com/s/1jlW4M5hwWkxXs9XWMGTSbw", desc: "Payal gaming 1:16 video!" },
-        { title: "little boy Vairal video mp.4", thumb: "https://i.ibb.co/F4LghgRT/In-Shot-20260212-103521928.jpg", link: "https://ads-lovat.vercel.app/?u=aHR0cHM6Ly8xMDI0dGVyYWJveC5jb20vcy8xUGNPVTRvOFp6RHFfVlVWbDlta29xUQ==&s=2", desc: "19 mint full video!" },
-        { title: "Sofik ahmed vairal Videoo mp.4", thumb: "https://i.ibb.co/9kHCkNZ1/In-Shot-20260212-103901093.jpg", link: "https://ads-lovat.vercel.app/?u=aHR0cHM6Ly8xMDI0dGVyYWJveC5jb20vcy8xaFVtUDRmc0VrNXh2UE5NTFlzLW1kZw==&s=1", desc: "sofik full video !" },
-        { title: "sijon 1 video mp.4", thumb: "https://i.ibb.co/Mxhz6dtJ/In-Shot-20260212-103613479.jpg", link: "https://1024terabox.com/s/1Z1VEqEM9iHnSbcvrRMwh0w", desc: "sijon 1 !" },
-    ];
+    function closeNotice() { document.getElementById('notice-overlay').style.display = 'none'; }
 
-    const banglaPosts = [
-        { title: "New trinding vairal Video mp.4", thumb: "https://i.ibb.co/cSPqzT30/In-Shot-20260212-103419510.jpg", link: "https://ads-lovat.vercel.app/?u=aHR0cHM6Ly8xMDI0dGVyYWJveC5jb20vcy8xYzR0cDdnSDZZZEVSWFNpSWJJdnpCUQ==&s=1", desc: "Trinding video !" },
-        { title: "Arohi mine Vadeo mp.4", thumb: "https://i.ibb.co/BKKMdGs8/In-Shot-20260209-220540287.jpg", link: "https://1024terabox.com/s/15Uskmmd67o6xekwaOlKCyg", desc: "Arohi mine 3:24 sec video!" },
-        { title: "hot Video mp.4", thumb: "https://i.ibb.co/mVVgQkpD/IMG-20260213-110640.jpg", link: "https://1024terabox.com/s/1x1bANer3loGXfqZ2O_hjhw", desc: "kides video !" },
-        { title: "Shosa apu Video mp.4", thumb: "https://i.ibb.co/qMSs5yFy/IMG-20260213-110717.jpg", link: "https://1024terabox.com/s/1x1bANer3loGXfqZ2O_hjhw", desc: "sosha apu r bangladeshi !" },
-        { title: "Arohi mine Vadeo mp.4", thumb: "https://i.ibb.co/8nrb2Yvc/IMG-20260212-103959.png", link: "https://1024terabox.com/s/1c4tp7gH6YdERXSiIbIvzBQ", desc: "Tik-toker video!" },
-    ];
-
-    const othersPosts = [
-        { title: "pakistani vairal", thumb: "https://i.ibb.co/Mxnx4b96/In-Shot-20260212-080505421.jpg", link: "https://ads-lovat.vercel.app/?u=aHR0cHM6Ly8xMDI0dGVyYWJveC5jb20vcy8xUGNPVTRvOFp6RHFfVlVWbDlta29xUQ==&s=2", desc: "Hot sin.." },
-    ];    
-
-    function render(posts) {
+    function render(cat, btn) {
+        if(btn) {
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+        const feed = document.getElementById('content-feed');
         feed.innerHTML = "";
-        posts.forEach(post => {
-            const shareText = encodeURIComponent(`📺 Vairal video : ${post.title}\n\n🔗 Video Link: ${FIXED_YOUTUBE_LINK}`);
-            const waLink = `https://wa.me/?text=${shareText}`;
+        
+        const currentUrl = window.location.href;
+
+        appConfig.posts.filter(p => p.cat === cat).forEach(post => {
+            const shareMsg = encodeURIComponent(`🔥 *New Viral Video:* ${post.title}\n\n🎬 Watch Here 👇\n${currentUrl}`);
+            const waShareUrl = `https://wa.me/?text=${shareMsg}`;
 
             const item = document.createElement('div');
             item.className = 'msg-bubble';
             item.innerHTML = `
-                <div class="thumb-container">
-                    <img src="${post.thumb}" class="thumb-img" onerror="this.src='https://via.placeholder.com/150?text=Video'">
-                </div>
+                <div class="thumb-container"><img src="${post.thumb}" class="thumb-img"></div>
                 <div class="post-body">
-                    <div class="post-info">
-                        <div class="title-wrapper">
-                            <span class="post-title">${post.title}</span>
-                            <a href="${waLink}" target="_blank" class="wa-share-btn">
-                                <i class="fab fa-whatsapp"></i>
-                            </a>
-                        </div>
-                        <p class="post-desc">${post.desc}</p>
+                    <div class="post-header-info">
+                        <span class="post-title" style="font-weight:bold; font-size:14px; color:#333;">${post.title}</span>
+                        <a href="${waShareUrl}" target="_blank" class="wa-icon"><i class="fab fa-whatsapp"></i></a>
                     </div>
-                    <a href="${post.link}" target="_blank" class="watch-btn" onclick="sendLog('${post.title.replace(/'/g, "\\'")}')">▶️ Watch now</a>
+                    <div class="watch-btn" onclick="sendLogAndOpen('${post.title}', '${post.link}')">▶️ Watch now</div>
                 </div>
             `;
             feed.appendChild(item);
         });
-
-        // --- NEW FOOTER WITH CHANNEL BUTTONS ---
-        const footer = document.createElement('div');
-        footer.className = 'feed-footer';
-        footer.innerHTML = `
-            <div class="channel-btn-container">
-                <a href="${channelLinks.chan1}" target="_blank" class="channel-link">📢 Open Channel 2</a>
-                <a href="${channelLinks.chan2}" target="_blank" class="channel-link">📢 Open Channel 3</a>
-            </div>
-            <p style="font-size: 11px; font-weight:bold; color:#777;">FOLLOW FOR MORE</p>
-            <div class="footer-icons">
-                <a href="https://t.me/Vairal_hub_Vx" class="fab fa-telegram" style="color:#0088cc;"></a>
-                <a href="https://www.instagram.com/vairal_tv_bot?igsh=aTJmc3JsbHN1dmNr" class="fab fa-instagram" style="color:#e4405f;"></a>
-                <a href="#" class="fab fa-facebook" style="color:#1877f2;"></a>
-            </div>
-        `;
-        feed.appendChild(footer);
-        feed.scrollTop = 0;
     }
 
-    async function sendLog(title) {
-        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=User clicked: ${title}`);
+    function sendLogAndOpen(title, link) {
+        const uid = localStorage.getItem('vHub_UID');
+        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent('User ['+uid+'] watching: '+title)}`);
+        window.open(link, '_blank');
     }
 
-    function showIndianPosts(btn) { setActive(btn); render(indianPosts); }
-    function showBangladeshiPosts(btn) { setActive(btn); render(banglaPosts); }
-    function showOthersPosts(btn) { setActive(btn); render(othersPosts); }
-    function setActive(clickedBtn) {
-        document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
-        clickedBtn.classList.add('active');
+    function openAdmin() {
+        if(prompt("Admin Pass:") === "1234") {
+            alert("Admin Mode Activated!");
+        }
     }
 
-    window.onload = () => showIndianPosts(document.getElementById('btn-indian'));
+    window.onload = () => { initUser(); render('ind'); };
 </script>
 </body>
 </html>
